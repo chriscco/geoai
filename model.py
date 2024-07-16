@@ -1,4 +1,3 @@
-import os
 
 from openai import OpenAI
 import config as cf
@@ -9,7 +8,7 @@ import os
 # CITE: https://github.com/openai/openai-python
 # CITE: https://ledgerbox.io/blog/rag-techniques-function-calling
 
-client = OpenAI(api_key=os.environ.get('OPENAI_API_KEY'))
+client = OpenAI(api_key=cf.api_key)
 
 
 def pdf_loader(filename):
@@ -19,11 +18,15 @@ def pdf_loader(filename):
 
 def create_es_with_mapping(es, index_name):
     mapping = {
-        "mappings": {
-            "properties": {
-                "model": {"type": "keyword"},
-                "year": {"type": "keyword"},
-                "text": {"type": "text"},
+        "properties": {
+            "model": {
+                "type": "keyword"
+            },
+            "year": {
+                "type": "keyword"
+            },
+            "text": {
+                "type": "text"
             }
         }
     }
@@ -53,7 +56,7 @@ def to_keywords(input_string):
 # initialize elasticsearch, add index to the instance es
 def init_index(es, paragraphs):
     index_name = "index_name_temp"
-    if es.indices.exist(index=index_name):
+    if es.indices.exists(index=index_name):
         es.indices.delete(index=index_name)
     create_es_with_mapping(es, index_name)
 
@@ -74,17 +77,25 @@ def init_index(es, paragraphs):
 def search(es, query):
     top_n = 3  # number of records returned
     index_name = "index_name_temp"
-    result = es.search(index=index_name, query=query, size=top_n)
-    return [hit["_source"]["text"] for hit in result["hits"]["hits"]]
+    query_keywords = {
+        "match": {
+            "keywords": to_keywords(query),
+        }
+    }
+    response = es.search(index=index_name, query=query_keywords, size=top_n)
+    # print(response)
+    return [hit["_source"]["text"] for hit in response["hits"]["hits"]]
 
 
-def get_response(question1, question2):
+def get_response(es, question1):
     response = client.chat.completions.create(
         model="gpt-3.5-turbo",
         messages=[
             {"role": "system", "content": "You are a helpful assistant."},
             {"role": "user", "content": "Hello!"},
-            {"role": "user", "content": "Answer the following questions: "}
+            {"role": "user", "content": "Answer the following question: "
+             + question1
+             + "by using the following text:"}
         ],
         temperature=0.5,
         stream=False,
@@ -92,12 +103,19 @@ def get_response(question1, question2):
     return response.choices[0].message["content"]
 
 
-def main():
-    # Temporary
-    paragraphs = range(100)
-    paragraphs[0] = abstract.abstract_entry
+if __name__ == '__main__':
+    # Temporary initialization
+    paragraphs = [abstract.abstract_entry]
+
+    es = cf.setup_elasticsearch()
+    init_index(es, paragraphs)
 
     question1 = "How many properties are exposed to wildfire?"
     question2 = "What are the outcomes of a fire model?"
+
+    get_response(es, question1)
+
+    # search(es, question1)
+
 
 
