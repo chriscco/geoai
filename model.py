@@ -2,11 +2,6 @@
 from openai import OpenAI
 import config as cf
 from documents import abstract
-import os
-
-# CITE: https://cookbook.openai.com/examples/vector_databases/elasticsearch/elasticsearch-retrieval-augmented-generation
-# CITE: https://github.com/openai/openai-python
-# CITE: https://ledgerbox.io/blog/rag-techniques-function-calling
 
 client = OpenAI(api_key=cf.api_key)
 
@@ -14,6 +9,15 @@ client = OpenAI(api_key=cf.api_key)
 def pdf_loader(filename):
     # to be implemented
     return 1
+
+
+def paragraph_builder(text):
+    paragraphs = []
+    lines = text.split('\n')
+    for line in lines:
+        if line:
+            paragraphs.append(line)
+    return paragraphs
 
 
 def create_es_with_mapping(es, index_name):
@@ -64,7 +68,7 @@ def init_index(es, paragraphs):
         {
             "_index": index_name,
             "_source": {
-                "keywords": to_keywords(paras),
+                "keyword": to_keywords(paras),
                 "text": paras
             }
         }
@@ -79,11 +83,10 @@ def search(es, query):
     index_name = "index_name_temp"
     query_keywords = {
         "match": {
-            "keywords": to_keywords(query),
+            "keyword": to_keywords(query),
         }
     }
     response = es.search(index=index_name, query=query_keywords, size=top_n)
-    # print(response)
     return [hit["_source"]["text"] for hit in response["hits"]["hits"]]
 
 
@@ -105,17 +108,20 @@ def get_response(es, question1):
 
 if __name__ == '__main__':
     # Temporary initialization
-    paragraphs = [abstract.abstract_entry]
+
+    paragraphs = paragraph_builder(abstract.abstract_entry)
 
     es = cf.setup_elasticsearch()
     init_index(es, paragraphs)
 
-    question1 = "How many properties are exposed to wildfire?"
-    question2 = "What are the outcomes of a fire model?"
+    question1 = "what models were used?"
 
-    get_response(es, question1)
+    # get_response(es, question1)
 
-    # search(es, question1)
+    search(es, question1)
 
 
+# CITE: https://cookbook.openai.com/examples/vector_databases/elasticsearch/elasticsearch-retrieval-augmented-generation
+# CITE: https://github.com/openai/openai-python
+# CITE: https://ledgerbox.io/blog/rag-techniques-function-calling
 
