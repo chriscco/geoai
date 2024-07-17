@@ -26,4 +26,11 @@ impacts add another 11% properties to this non-zero exposure class over the next
 Mississippi River. “Major” aggregate wildfire exposure of greater than 6% over the
 30-year analysis period from 2022 to 2052 is estimated for 10.2 million properties.
 The FSF-WFM represents a notable contribution to the ability to produce
-property-specific, climate-adjusted wildfire risk assessments in the US."""
+property-specific, climate-adjusted wildfire risk assessments in the US.
+
+
+
+model model 
+
+
+not here, """
