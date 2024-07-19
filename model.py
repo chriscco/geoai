@@ -2,6 +2,7 @@
 from openai import OpenAI
 import config as cf
 from documents import abstract
+import time
 
 client = OpenAI(api_key=cf.api_key)
 
@@ -24,9 +25,6 @@ def create_es_with_mapping(es, index_name):
     mapping = {
         "properties": {
             "model": {
-                "type": "keyword"
-            },
-            "year": {
                 "type": "keyword"
             },
             "text": {
@@ -68,6 +66,7 @@ def init_index(es, paragraphs):
         {
             "_index": index_name,
             "_source": {
+                # needs to be re-constructed
                 "keyword": to_keywords(paras),
                 "text": paras
             }
@@ -79,13 +78,14 @@ def init_index(es, paragraphs):
 
 
 def search(es, query):
-    top_n = 3  # number of records returned
+    top_n = 10  # number of records returned
     index_name = "index_name_temp"
     query_keywords = {
         "match": {
             "keyword": to_keywords(query),
         }
     }
+    es.indices.refresh(index=index_name)
     response = es.search(index=index_name, query=query_keywords, size=top_n)
     return [hit["_source"]["text"] for hit in response["hits"]["hits"]]
 
@@ -98,7 +98,8 @@ def get_response(es, question1):
             {"role": "user", "content": "Hello!"},
             {"role": "user", "content": "Answer the following question: "
              + question1
-             + "by using the following text:"}
+             + "by using the following text:"
+             + '\n'.join(search(es, question1))},
         ],
         temperature=0.5,
         stream=False,
@@ -107,8 +108,6 @@ def get_response(es, question1):
 
 
 if __name__ == '__main__':
-    # Temporary initialization
-
     paragraphs = paragraph_builder(abstract.abstract_entry)
 
     es = cf.setup_elasticsearch()
