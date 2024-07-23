@@ -6,7 +6,7 @@ import nltk
 import re
 import os
 import json
-
+from glob import glob
 from dotenv import load_dotenv
 
 
@@ -22,4 +22,37 @@ def setup_elasticsearch():
 def print_json(response) :
     json_str = json.dumps(response, indent=2)
     print(json_str)
+
+
+def file_retrieve(path):
+    # get files under a path with specified extension
+    files = [glob(path + extension) for extension in ['*.text', '*.txt', '*.py']]
+    return files
+
+
+def source_loader(file_path):
+    files = file_retrieve(file_path)
+    txt_files = []
+    for i in range(2):
+        if files[i]:  # check if empty
+            txt_files.append(files[i])
+    pdf_files = [files[2]]
+    texts = []
+    for file in txt_files:
+        for filename in file:
+            texts.append(text_reader(filename))
+
+
+def text_reader(filename):
+    f = open(filename, 'r')
+    content = f.read()
+    f.close()
+    return content
+
+def pdf_reader(filename):
+
+
+if __name__ == '__main__':
+    source_loader("documents/")
+
 
