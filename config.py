@@ -9,8 +9,10 @@ import json
 
 from dotenv import load_dotenv
 
-load_dotenv()
-api_key = os.environ.get("OPENAI_API_KEY")
+
+def get_api_key():
+    load_dotenv()
+    return os.environ.get("OPENAI_API_KEY")
 
 
 def setup_elasticsearch():
