@@ -58,4 +58,5 @@ def pdf_reader(filename):
 if __name__ == '__main__':
     text_getter('documents/')
 
+# CITE: https://products.documentprocessing.com/merger/python/pypdf/
 
