@@ -5,6 +5,7 @@ from nltk.corpus import stopwords
 import nltk
 import re
 import os
+import json
 
 from dotenv import load_dotenv
 
@@ -14,3 +15,9 @@ api_key = os.environ.get("OPENAI_API_KEY")
 
 def setup_elasticsearch():
     return Elasticsearch("http://localhost:9200")
+
+
+def print_json(response) :
+    json_str = json.dumps(response, indent=2)
+    print(json_str)
+

@@ -2,7 +2,6 @@
 from openai import OpenAI
 import config as cf
 from documents import abstract
-import time
 
 client = OpenAI(api_key=cf.api_key)
 
@@ -87,6 +86,7 @@ def search(es, query):
     }
     es.indices.refresh(index=index_name)
     response = es.search(index=index_name, query=query_keywords, size=top_n)
+    cf.print_json(response)
     return [hit["_source"]["text"] for hit in response["hits"]["hits"]]
 
 
