@@ -1,7 +1,6 @@
 
 from openai import OpenAI
 import config as cf
-from documents import abstract
 
 client = OpenAI(api_key=cf.get_api_key())
 
@@ -106,7 +105,8 @@ def get_response(es, question1):
 
 
 if __name__ == '__main__':
-    paragraphs = paragraph_builder(abstract.abstract_entry)
+    directory = 'documents/'
+    paragraphs = paragraph_builder('\n'.join(cf.text_getter(directory)))
 
     es = cf.setup_elasticsearch()
     init_index(es, paragraphs)

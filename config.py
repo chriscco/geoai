@@ -25,26 +25,22 @@ def print_json(response) :
     print(json_str)
 
 
-def file_retrieve(path):
+def file_getter(path):
     # get files under a path with specified extension
-    files = [glob(path + extension) for extension in ['*.text', '*.txt', '*.pdf']]
+    files = [glob(path + extension) for extension in ['*.txt', '*.pdf']]
     return files
 
 
-def source_loader(file_path):
-    files = file_retrieve(file_path)
-    txt_files = []
-    for i in range(2):
-        if files[i]:  # check if empty
-            txt_files.append(files[i])
-    pdf_files = [files[2]]
+def text_getter(file_path):
+    files = file_getter(file_path)
+    txt_files = files[0]
+    pdf_files = files[1]
     texts = []
     for file in txt_files:
-        for filename in file:
-            texts.append(text_reader(filename))
-    for file in pdf_files[0]:
-        texts.append(pdf_reader(file))
-    print(texts)
+        texts.append(text_reader(file))
+    for file in pdf_files:
+        texts.append('\n'.join(pdf_reader(file)))
+    return texts
 
 
 def text_reader(filename):
@@ -60,6 +56,6 @@ def pdf_reader(filename):
 
 
 if __name__ == '__main__':
-    source_loader("documents/")
+    text_getter('documents/')
 
 
