@@ -3,12 +3,7 @@ from openai import OpenAI
 import config as cf
 from documents import abstract
 
-client = OpenAI(api_key=cf.api_key)
-
-
-def pdf_loader(filename):
-    # to be implemented
-    return 1
+client = OpenAI(api_key=cf.get_api_key())
 
 
 def paragraph_builder(text):
@@ -24,10 +19,13 @@ def create_es_with_mapping(es, index_name):
     mapping = {
         "properties": {
             "model": {
-                "type": "keyword"
+                "type": "keyword",
+            },
+            "location": {
+                "type": "keyword",
             },
             "text": {
-                "type": "text"
+                "type": "text",
             }
         }
     }
