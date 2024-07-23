@@ -1,13 +1,14 @@
-from elasticsearch7 import Elasticsearch, helpers
-from nltk.stem import PorterStemmer
-from nltk.tokenize import word_tokenize
-from nltk.corpus import stopwords
 import nltk
 import re
 import os
 import json
+import PyPDF2
 from glob import glob
 from dotenv import load_dotenv
+from elasticsearch7 import Elasticsearch, helpers
+from nltk.stem import PorterStemmer
+from nltk.tokenize import word_tokenize
+from nltk.corpus import stopwords
 
 
 def get_api_key():
@@ -26,7 +27,7 @@ def print_json(response) :
 
 def file_retrieve(path):
     # get files under a path with specified extension
-    files = [glob(path + extension) for extension in ['*.text', '*.txt', '*.py']]
+    files = [glob(path + extension) for extension in ['*.text', '*.txt', '*.pdf']]
     return files
 
 
@@ -41,6 +42,9 @@ def source_loader(file_path):
     for file in txt_files:
         for filename in file:
             texts.append(text_reader(filename))
+    for file in pdf_files[0]:
+        texts.append(pdf_reader(file))
+    print(texts)
 
 
 def text_reader(filename):
@@ -49,7 +53,10 @@ def text_reader(filename):
     f.close()
     return content
 
+
 def pdf_reader(filename):
+    reader = PyPDF2.PdfReader(filename)
+    return [page.extract_text() for page in reader.pages]
 
 
 if __name__ == '__main__':
