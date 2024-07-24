@@ -1,2 +1,5 @@
 # GeoAI
-Updated 07/22/2024
+Updated 07/23/2024
+
+## Server Repository
+https://github.com/chriscco/geo_ai_server
