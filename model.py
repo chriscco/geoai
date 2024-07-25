@@ -1,3 +1,4 @@
+import sys
 
 from openai import OpenAI
 import config as cf
@@ -31,15 +32,9 @@ def create_es_with_mapping(es, index_name):
     es.indices.create(index=index_name, mappings=mapping)
 
 
-def toolkit_download():
-    cf.nltk.download('punkt')  # cutting words
-    cf.nltk.download('stopwords')
-
-
 # convert input string to stemmed, tokenized keywords
 def to_keywords(input_string):
     output_string = ""
-    toolkit_download()
     no_symbols_string = cf.re.sub(r'[^a-zA-Z0-9\s]', ' ', input_string)
     word_tokens = cf.word_tokenize(no_symbols_string)
     stopwords = set(cf.stopwords.words('english'))
@@ -83,8 +78,7 @@ def search(es, query):
     }
     es.indices.refresh(index=index_name)
     response = es.search(index=index_name, query=query_keywords, size=top_n)
-    cf.print_json(response)
-    return [hit["_source"]["text"] for hit in response["hits"]["hits"]]
+    return [hit["_source"] for hit in response["hits"]["hits"]]
 
 
 def get_response(es, question1):
@@ -105,18 +99,20 @@ def get_response(es, question1):
 
 
 if __name__ == '__main__':
-    directory = 'documents/'
+    directory = '/Users/chriscao/Desktop/progs/geo_ai/documents/'
     paragraphs = paragraph_builder('\n'.join(cf.text_getter(directory)))
 
     es = cf.setup_elasticsearch()
     init_index(es, paragraphs)
 
-    question1 = "what models were used?"
-
+    # question1 = "what models were used?"
     # get_response(es, question1)
 
-    search(es, question1)
-
+    query = sys.argv[1]
+    hits = search(es, query)
+    for hit in hits:
+        print(hit)
+        print()
 
 # CITE: https://cookbook.openai.com/examples/vector_databases/elasticsearch/elasticsearch-retrieval-augmented-generation
 # CITE: https://github.com/openai/openai-python

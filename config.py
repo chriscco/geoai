@@ -11,6 +11,11 @@ from nltk.tokenize import word_tokenize
 from nltk.corpus import stopwords
 
 
+def toolkit_download():
+    nltk.download('punkt')  # cutting words
+    nltk.download('stopwords')
+
+
 def get_api_key():
     load_dotenv()
     return os.environ.get("OPENAI_API_KEY")
@@ -20,8 +25,8 @@ def setup_elasticsearch():
     return Elasticsearch("http://localhost:9200")
 
 
-def print_json(response) :
-    json_str = json.dumps(response, indent=2)
+def print_json(data):
+    json_str = json.dumps(data, indent=2)
     print(json_str)
 
 
@@ -56,7 +61,9 @@ def pdf_reader(filename):
 
 
 if __name__ == '__main__':
-    text_getter('documents/')
+    t = text_getter('/Users/chriscao/Desktop/progs/geo_ai/documents/')
+    print(t[0])
+    print("123123123123123")
 
 # CITE: https://products.documentprocessing.com/merger/python/pypdf/
 
