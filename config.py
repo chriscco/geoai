@@ -61,9 +61,7 @@ def pdf_reader(filename):
 
 
 if __name__ == '__main__':
-    t = text_getter('/Users/chriscao/Desktop/progs/geo_ai/documents/')
-    print(t[0])
-    print("123123123123123")
+    print("config.py")
 
 # CITE: https://products.documentprocessing.com/merger/python/pypdf/
 
