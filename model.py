@@ -105,7 +105,6 @@ if __name__ == '__main__':
     es = cf.setup_elasticsearch()
     init_index(es, paragraphs)
 
-    # question1 = "what models were used?"
     # get_response(es, question1)
 
     query = sys.argv[1]
