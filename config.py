@@ -61,6 +61,7 @@ def pdf_reader(filename):
 
 
 if __name__ == '__main__':
+    toolkit_download()
     print("config.py")
 
 # CITE: https://products.documentprocessing.com/merger/python/pypdf/
