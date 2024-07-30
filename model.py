@@ -1,9 +1,13 @@
+import json
 import sys
 
 from openai import OpenAI
 import config as cf
 
-client = OpenAI(api_key=cf.get_api_key())
+client = OpenAI(
+    api_key=cf.get_api_key(),
+    base_url="https://api.xiaoai.plus/v1",
+)
 
 
 def paragraph_builder(text):
@@ -78,24 +82,24 @@ def search(es, query):
     }
     es.indices.refresh(index=index_name)
     response = es.search(index=index_name, query=query_keywords, size=top_n)
-    return [hit["_source"] for hit in response["hits"]["hits"]]
+    return [hit["_source"]['text'] for hit in response["hits"]["hits"]]
 
 
-def get_response(es, question1):
-    response = client.chat.completions.create(
+def get_response(es, query):
+    completion = client.chat.completions.create(
         model="gpt-3.5-turbo",
         messages=[
             {"role": "system", "content": "You are a helpful assistant."},
             {"role": "user", "content": "Hello!"},
             {"role": "user", "content": "Answer the following question: "
-             + question1
+             + query
              + "by using the following text:"
-             + '\n'.join(search(es, question1))},
+             + '\n'.join(search(es, query))},
         ],
-        temperature=0.5,
+        max_tokens=500,
         stream=False,
     )
-    return response.choices[0].message["content"]
+    return completion.choices[0].message.content
 
 
 if __name__ == '__main__':
@@ -105,13 +109,9 @@ if __name__ == '__main__':
     es = cf.setup_elasticsearch()
     init_index(es, paragraphs)
 
-    # get_response(es, question1)
-
     query = sys.argv[1]
-    hits = search(es, query)
-    for hit in hits:
-        print(hit)
-        print()
+    print(get_response(es, query))
+
 
 # CITE: https://cookbook.openai.com/examples/vector_databases/elasticsearch/elasticsearch-retrieval-augmented-generation
 # CITE: https://github.com/openai/openai-python
