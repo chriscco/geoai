@@ -22,14 +22,11 @@ def paragraph_builder(text):
 def create_es_with_mapping(es, index_name):
     mapping = {
         "properties": {
-            "model": {
+            "incident name": {
                 "type": "keyword",
             },
-            "location": {
+            "formula": {
                 "type": "keyword",
-            },
-            "text": {
-                "type": "text",
             }
         }
     }
@@ -77,7 +74,7 @@ def search(es, query):
     index_name = "index_name_temp"
     query_keywords = {
         "match": {
-            "keyword": to_keywords(query),
+            "text": to_keywords(query),
         }
     }
     es.indices.refresh(index=index_name)
