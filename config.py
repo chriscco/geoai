@@ -18,7 +18,7 @@ def toolkit_download():
 
 def get_api_key():
     load_dotenv()
-    return os.environ.get("OPENAI_API_KEY")
+    return os.environ.get("NEW_API_KEY")
 
 
 def setup_elasticsearch():
@@ -62,7 +62,6 @@ def pdf_reader(filename):
 
 if __name__ == '__main__':
     toolkit_download()
-    print("config.py")
 
 # CITE: https://products.documentprocessing.com/merger/python/pypdf/
 
