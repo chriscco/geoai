@@ -10,6 +10,7 @@ from nltk.stem import PorterStemmer
 from nltk.tokenize import word_tokenize
 from nltk.corpus import stopwords
 
+from elasticsearch_config import get_mapping, get_setting
 
 def toolkit_download():
     nltk.download('punkt')  # cutting words
