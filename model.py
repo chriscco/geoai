@@ -19,20 +19,6 @@ def paragraph_builder(text):
     return paragraphs
 
 
-def create_es_with_mapping(es, index_name):
-    mapping = {
-        "properties": {
-            "incident name": {
-                "type": "keyword",
-            },
-            "formula": {
-                "type": "keyword",
-            }
-        }
-    }
-    es.indices.create(index=index_name, mappings=mapping)
-
-
 # convert input string to stemmed, tokenized keywords
 def to_keywords(input_string):
     output_string = ""
@@ -52,15 +38,14 @@ def init_index(es, paragraphs):
     index_name = "index_name_temp"
     if es.indices.exists(index=index_name):
         es.indices.delete(index=index_name)
-    create_es_with_mapping(es, index_name)
+    #  retrieve mapping and setting
+    es.indices.create(index=index_name, mappings=cf.get_mapping(), settings=cf.get_setting())
 
     actions = [
         {
             "_index": index_name,
             "_source": {
-                # needs to be re-constructed
-                "keyword": to_keywords(paras),
-                "text": paras
+                "content": paras
             }
         }
         for paras in paragraphs
@@ -73,13 +58,14 @@ def search(es, query):
     top_n = 10  # number of records returned
     index_name = "index_name_temp"
     query_keywords = {
-        "match": {
-            "text": to_keywords(query),
+        "multi_match": {
+            "query": query,
+            "fields": ["title", "content"]
         }
     }
     es.indices.refresh(index=index_name)
     response = es.search(index=index_name, query=query_keywords, size=top_n)
-    return [hit["_source"]['text'] for hit in response["hits"]["hits"]]
+    return [hit["_source"]['content'] for hit in response["hits"]["hits"]]
 
 
 def get_response(es, query):
