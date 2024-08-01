@@ -86,14 +86,24 @@ def get_response(es, query):
 
 
 if __name__ == '__main__':
-    directory = '/Users/chriscao/Desktop/progs/geo_ai/documents/'
-    paragraphs = paragraph_builder('\n'.join(cf.text_getter(directory)))
+    query = sys.argv[1]  # user prompt
+    ifUpload = sys.argv[2]  # if a file is uploaded
+    directory = '/Users/chriscao/Desktop/progs/geo_ai/documents/data/'
+    upload_directory = '/Users/chriscao/Desktop/progs/geo_ai/documents/upload/'
+
+    paragraphs = []
+    if ifUpload == "true":
+        paragraphs = paragraph_builder('\n'.join(cf.text_getter(upload_directory)))
+    else:
+        paragraphs = paragraph_builder('\n'.join(cf.text_getter(directory)))  # read documents by line
 
     es = cf.setup_elasticsearch()
     init_index(es, paragraphs)
 
-    query = sys.argv[1]
     print(get_response(es, query))
+
+    if ifUpload == "true":  # remove pdf file uploaded
+        cf.os.remove(upload_directory + "upload.pdf")
 
 
 # CITE: https://cookbook.openai.com/examples/vector_databases/elasticsearch/elasticsearch-retrieval-augmented-generation
