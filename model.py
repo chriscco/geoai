@@ -69,15 +69,15 @@ def search(es, query):
 
 
 def get_response(es, query):
+    new_line = '\n'
     completion = client.chat.completions.create(
         model="gpt-3.5-turbo",
         messages=[
             {"role": "system", "content": "You are a helpful assistant."},
             {"role": "user", "content": "Hello!"},
-            {"role": "user", "content": "Answer the following question: "
-             + query
-             + "by using the following text:"
-             + '\n'.join(search(es, query))},
+            {"role": "user", "content":
+                f"Please answer the following question based on the text below: "
+                f"\nQuestion: {query}\nText: \n{new_line.join(search(es, query))}"}
         ],
         max_tokens=500,
         stream=False,
