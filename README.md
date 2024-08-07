@@ -39,7 +39,7 @@ API is GPT-3.5-turbo.
 7. Run the server
 
 ## Usage
-The usage is nearly the same as ChatGPT, GeoAI would generate
+The usage is nearly the same as ChatGPT, while GeoAI would generate
 responses based on its dataset.
 
 Users can upload one PDF file as reference to help GeoAI to generate
