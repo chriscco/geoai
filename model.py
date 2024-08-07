@@ -5,8 +5,8 @@ from openai import OpenAI
 import config as cf
 
 client = OpenAI(
-    api_key=cf.get_api_key(),
-    base_url="https://api.xiaoai.plus/v1",
+    api_key=cf.enviro.get_api_key(),
+    base_url=cf.enviro.get_openai_url(),
 )
 
 
@@ -88,8 +88,8 @@ def get_response(es, query):
 if __name__ == '__main__':
     query = sys.argv[1]  # user prompt
     ifUpload = sys.argv[2]  # if a file is uploaded
-    directory = '/Users/chriscao/Desktop/progs/geo_ai/documents/data/'
-    upload_directory = '/Users/chriscao/Desktop/progs/geo_ai/documents/upload/'
+    directory = cf.enviro.get_directory()
+    upload_directory = cf.enviro.get_upload_directory()
 
     paragraphs = []
     if ifUpload == "true":

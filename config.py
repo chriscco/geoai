@@ -10,17 +10,16 @@ from nltk.stem import PorterStemmer
 from nltk.tokenize import word_tokenize
 from nltk.corpus import stopwords
 
+from Environ import Environ
 from elasticsearch_config import get_mapping, get_setting
+
+
+enviro = Environ()
 
 
 def toolkit_download():
     nltk.download('punkt')  # cutting words
     nltk.download('stopwords')
-
-
-def get_api_key():
-    load_dotenv()
-    return os.environ.get("NEW_API_KEY")
 
 
 def setup_elasticsearch():
