@@ -3,10 +3,13 @@ import sys
 
 from openai import OpenAI
 import config as cf
+from Environ import Environ
+
+enviro = Environ()
 
 client = OpenAI(
-    api_key=cf.enviro.get_api_key(),
-    base_url=cf.enviro.get_openai_url(),
+    api_key=enviro.get_api_key(),
+    base_url=enviro.get_openai_url(),
 )
 
 
@@ -88,8 +91,8 @@ def get_response(es, query):
 if __name__ == '__main__':
     query = sys.argv[1]  # user prompt
     ifUpload = sys.argv[2]  # if a file is uploaded
-    directory = cf.enviro.get_directory()
-    upload_directory = cf.enviro.get_upload_directory()
+    directory = enviro.get_directory()
+    upload_directory = enviro.get_upload_directory()
 
     paragraphs = []
     if ifUpload == "true":

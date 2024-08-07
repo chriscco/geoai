@@ -10,11 +10,7 @@ from nltk.stem import PorterStemmer
 from nltk.tokenize import word_tokenize
 from nltk.corpus import stopwords
 
-from Environ import Environ
 from elasticsearch_config import get_mapping, get_setting
-
-
-enviro = Environ()
 
 
 def toolkit_download():
